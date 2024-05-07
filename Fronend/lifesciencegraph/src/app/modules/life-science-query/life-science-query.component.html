@@ -1,0 +1,51 @@
+<div class="life-science-qeury">
+  <div class="query-container">
+    <mat-form-field class="example-full-width">
+      <mat-label>Enter a Cypher query</mat-label>
+      <textarea matInput placeholder="Match n return n;" [(ngModel)]="queryValue"></textarea>
+    </mat-form-field>
+    <button class="query-btn" (click)="submit()">Submit Query</button>
+  </div>
+
+
+  <div *ngIf="queryResult table-users">
+    <div class="header">Query Result:</div>
+    <table>
+      <thead>
+        <tr>
+          <th *ngFor="let colTitle of tableColumns" scope="col">{{colTitle}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of queryResult">
+          <td *ngFor="let _keyVal of tableColumns">{{getItemValue(_keyVal, item)}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+
+    <!-- <table>
+    <tr *ngFor="let resultItem of queryResult">
+      <td *ngIf="resultItem.name">
+        <strong>Name:</strong> {{ resultItem.name }}
+      </td>
+      <td *ngIf="resultItem.id">
+        <strong>ID:</strong> {{ resultItem.id }}
+      </td>
+      <td *ngIf="resultItem.description">
+        <strong>Description:</strong> {{ resultItem.description }}
+      </td>
+      <td *ngIf="resultItem.type">
+        <strong>Type:</strong> {{ resultItem.type }}
+      </td>
+      <td *ngIf="resultItem.synonyms">
+        <strong>Synonyms:</strong> {{ resultItem.synonyms }}
+      </td>
+      <td *ngIf="resultItem.taxid">
+        <strong>TaxId:</strong> {{ resultItem.taxid }}
+      </td>
+    </tr>
+  </table> -->
+
+  </div>
+</div>

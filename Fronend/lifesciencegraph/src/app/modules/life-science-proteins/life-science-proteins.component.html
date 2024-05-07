@@ -1,0 +1,123 @@
+<div class="life-science-proteins">
+  <h1>Protein Data</h1>
+  <mat-divider></mat-divider>
+
+  <section>
+    <!-- accession-dropdown.component.html -->
+    <div class="d-flex align-items-center justify-content-center">
+      <input type="file" (change)="onFileSelected($event)" />
+      <label class="ml-3">Select Accession:</label>
+      <!-- <select multiple id="accessionSelect" [(ngModel)]="queryValue" (change)="updateQueryValue()">
+        <option *ngFor="let selectedAccession of accessionNumbers" [value]="selectedAccession">{{ selectedAccession }}
+        </option>
+      </select> -->
+      <ng-select (change)="onAccSelect($event)" [multiple]="true" [(ngModel)]="queryValue">
+        <ng-option *ngFor="let selectedAccession of accessionNumbers"
+          [value]="selectedAccession">{{selectedAccession}}</ng-option>
+      </ng-select>
+
+
+    </div>
+
+
+    <mat-divider></mat-divider>
+
+    <section>
+      <mat-form-field>
+        <mat-label>Start Node</mat-label>
+        <!-- <select matNativeControl required [(ngModel)]="queryValue">
+          <option value="MATCH (n:Disease) RETURN n LIMIT 25">Disease</option>
+          <option value="MATCH (n:Complex) RETURN n LIMIT 25">Complex</option>
+          <option value="MATCH (n:Protein) WHERE n.accession IN ['5NT1A_HUMAN', 'AAPK1_HUMAN', '1C04_HUMAN'] RETURN n">
+            Protein</option>
+          <option value="MATCH (n:Biological_process) RETURN n LIMIT 25">Biological Process</option>
+        </select> -->
+        <select matNativeControl required [(ngModel)]="nodeValue" (ngModelChange)="onStartNodeSelect()">
+          <option value="Disease">Disease</option>
+          <option value="Complex">Complex</option>
+          <option value="Protein">Protein</option>
+          <option value="Biological_process">Biological Process</option>
+        </select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Relation</mat-label>
+        <select [disabled]="!nodeValue" matNativeControl required [(ngModel)]="selectedRelation">
+          <option *ngFor="let relation of relationShipList" value="{{relation?.code}}">{{relation?.title}}</option>
+        </select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>End Node</mat-label>
+        <select matNativeControl required [(ngModel)]="endNode">
+          <option value="Disease">Disease</option>
+          <option value="Complex">Complex</option>
+          <option value="Protein">Protein</option>
+          <option value="Biological_process">Biological Process</option>
+        </select>
+      </mat-form-field>
+      <input type="text" [value]="queryValue" readonly />
+
+      <div class="Button Class">
+        <button mat-button color="primary" (click)="submit()"> Submit Query</button>
+      </div>
+
+      {{computedQuery}}
+
+
+
+
+
+
+
+
+
+
+      <!-- <div *ngIf="queryResult">
+        <h2>Query Result:</h2>
+
+        <table>
+          <tr *ngFor="let resultItem of queryResult">
+            <td *ngIf="resultItem.accession">
+              <strong>Accession:</strong> {{ resultItem.accession }}
+            </td>
+            <td *ngIf="resultItem.id">
+              <strong>ID:</strong> {{ resultItem.id }}
+            </td>
+            <td *ngIf="resultItem.name">
+              <strong>Name:</strong> {{ resultItem.name }}
+            </td>
+            <td *ngIf="resultItem.synonyms">
+              <strong>Synonyms:</strong> {{ resultItem.synonyms }}
+            </td>
+            <td *ngIf="resultItem.taxid">
+              <strong>TaxId:</strong> {{ resultItem.taxid }}
+            </td>
+          </tr>
+        </table>
+      </div> -->
+      <div *ngIf="queryResult table-users">
+        <div class="header">Query Result:</div>
+        <table>
+          <thead>
+            <tr>
+              <th *ngFor="let colTitle of tableColumns" scope="col">{{colTitle}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of queryResult">
+              <td *ngFor="let _keyVal of tableColumns">{{getItemValue(_keyVal, item)}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+
+      <!-- </section> -->
+
+      <mat-divider></mat-divider>
+
+
+
+
+    </section>
+  </section>
+</div>
