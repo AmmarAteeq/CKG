@@ -1,0 +1,89 @@
+package service.lifesciencegraph.db;
+
+import org.neo4j.driver.Record;
+import org.neo4j.driver.Result;
+import org.neo4j.driver.Session;
+import org.neo4j.driver.internal.value.RelationshipValue;
+import org.neo4j.driver.types.Relationship;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import core.db.DBImplementation;
+import core.db.configuration.DBConfiguration;
+import core.db.neo4j.Neo4JDB;
+import core.server.RunServer;
+
+public class LifeScienceGraphNeo4JHandler extends Neo4JDB implements DBImplementation {
+
+	public LifeScienceGraphNeo4JHandler(DBConfiguration dbConfig, RunServer server) {
+		super(dbConfig, server);
+	}
+
+	@Override
+	public boolean dbAccessible() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public JsonArray executeCypherQuery(String query) {
+
+		Session session = this.getSession();
+		Result result = session.run(query);
+		JsonArray list = new JsonArray(); 
+
+
+		while (result.hasNext()) {
+			Record record = result.next();
+			JsonObject jsonObject = new JsonObject();
+
+			for (int i =0; i < record.size(); i++) {
+						
+				if (record.get(i).asObject().toString().contains("relationship")) {	
+					if(record.get(i) instanceof RelationshipValue) {
+						for (String key : record.get(i).asRelationship().keys()) {	
+							jsonObject.addProperty("start", record.get(i).asRelationship().startNodeId());
+							jsonObject.addProperty("end", record.get(i).asRelationship().endNodeId());
+							jsonObject.addProperty("type", record.get(i).asRelationship().type());
+							jsonObject.addProperty("id", record.get(i).asRelationship().id());
+							jsonObject.addProperty(key, record.get(i).asRelationship().get(key).toString());
+						}
+					} else {
+						for (String key : record.get(i).get(0).asRelationship().keys()) {	
+							jsonObject.addProperty("start", record.get(i).get(0).asRelationship().startNodeId());
+							jsonObject.addProperty("end", record.get(i).get(0).asRelationship().endNodeId());
+							jsonObject.addProperty("type", record.get(i).get(0).asRelationship().type());
+							jsonObject.addProperty("id", record.get(i).get(0).asRelationship().id());
+							jsonObject.addProperty(key, record.get(i).get(0).asRelationship().get(key).toString());
+						}
+					}
+				} else if (record.get(i).toString().contains("node")){
+					for (String key : record.get(i).asNode().keys()) {	
+						jsonObject.addProperty(key, record.get(i).asNode().get(key).toString());			
+					}
+				} 
+				
+//				else if (record.get(i).toString().contains("node")){
+//					for (String key : record.get(i).asNode().keys()) {	
+//						jsonObject.addProperty(key, record.get(i).asNode().get(key).toString());			
+//					}
+//					server.log().info("ELSE IF");
+//				}
+				else {
+					for(String key : record.keys()) {	
+						jsonObject.addProperty(key, record.get(key).toString());
+					}
+				}
+				
+				
+				list.add(jsonObject);
+			}
+			server.log().info("LIST OF JSON OBJECT RETURNED");
+
+		//}
+
+		return list;
+		
+	}
+
+}
